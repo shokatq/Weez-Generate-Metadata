@@ -1,0 +1,12 @@
+flask==3.0.3
+openai==1.65.4
+pytesseract==0.3.13
+pillow==10.4.0
+textract==1.6.3
+PyPDF2==3.0.1
+python-pptx==0.6.18
+python-docx==1.1.2
+azure.storage.blob==12.23
+gunicorn==23.0.0
+requests==2.32.3
+openpyxl==3.1.5
