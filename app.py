@@ -72,7 +72,7 @@ def generate_and_save_metadata(metadata, file_name, user_id):
 
         # Step 2: Call embeddings API
         try:
-            embedding_api_url = "https://process-embeddings-fdh0ckfnaddta4bw.canadacentral-01.azurewebsites.net/process_single_embedding"
+            embedding_api_url = "https://weez-process-embeddings-d2a3ffeab9aufvff.canadacentral-01.azurewebsites.net/process_single_embedding"
             payload = {"user_id": user_id, "blob_name": f"{user_id}/{file_name}.json"}
             response = requests.post(embedding_api_url, json=payload)
             if response.status_code == 200:
