@@ -11,6 +11,7 @@ from io import BytesIO
 from azure.storage.blob import BlobServiceClient, ContentSettings
 import openpyxl
 import requests
+from threading import Thread
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
@@ -449,6 +450,12 @@ def get_user_files_count(username):
         app.logger.error(f"Error fetching blob count: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+def background_metadata_processing(metadata, file_name, user_id):
+    try:
+        generate_and_save_metadata(metadata, file_name, user_id)
+    except Exception as e:
+        print(f"Error in background thread: {e}")
+
 
 @app.route('/generate-metadata', methods=['POST'])
 def generate_metadata_endpoint():
@@ -482,11 +489,15 @@ def generate_metadata_endpoint():
     except Exception as e:
         return jsonify({'error': f"Failed to generate metadata: {str(e)}"}), 500
 
-    generate_and_save_metadata(metadata, file_name, user_id)
+    Thread(target=background_metadata_processing, args=(metadata, file_name, user_id)).start()
     print("Saved the Metadata and triggered embeddings generation")
 
-    return jsonify(metadata)
+    response = {
+        **metadata,
+        'status': 'processing started'
+    }
+    return jsonify(response),200
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(threaded=True)
